@@ -64,8 +64,7 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        $book = Book::with(['previews', 'authors'])->findOrFail($id);
-        //dd($book->authors);
+        $book = Book::with(['reviews', 'authors'])->findOrFail($id);
         return view('books.show', [
             'book' => $book,
         ]);

@@ -2,52 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-class AuthController extends Controller
+use App\Models\Author;
+class AuthorController extends Controller
 {
-    public function showRegister() {
-        return view('auth.register');
-    }
-    public function showLogin() {
-        return view('auth.login');
-    }
-    public function register(Request $request){
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-        $validated['password'] = bcrypt($validated['password']);
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        // Kiểm tra nếu người dùng chưa đăng nhập
+        // if (!Auth::check()) {
+        //     return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
+        // }
 
-        $user = User::create($validated);
-        try {
-            Auth::login($user);
-        } catch (\Exception $e) {
-            return redirect()->route('register')->withErrors(['errors' => $e->getMessage()]);
+        // Lấy thông tin người dùng
+        // $user = Auth::user();
+        // dd("here");
+       if(Auth::user() && Auth::user()->role == 'user') {
+                // Fetch authors from the database
+            $authors = Author::all();
+            // Return the authors to the view
+            return view('authors.index', compact('authors'))->with('username', Auth::user()->name);
         }
-        return redirect()->route('books.index');
-    }
-    public function login(Request $request){
-        $validated = $request->validate([
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8',
-        ]);
-        if (Auth::attempt($validated)) {
-            return redirect()->route('books.index');
+        else {
+            // If the user is not an admin, redirect them to the home page or show an error
+            return redirect()->route('books.index')->with('error', 'Unauthorized access');
         }
-        return redirect()->route('login')->withErrors(['errors' => 'Invalid credentials']);
 
     }
 
-    public function logout(Request $request){
-        Auth::logout();
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
-        //invalidate the session
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }

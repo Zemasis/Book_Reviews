@@ -7,6 +7,7 @@ use App\Http\Controllers\PreviewController;
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\AuthController;
 
 
 Route::get('/', function () {
